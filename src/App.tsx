@@ -1,0 +1,43 @@
+import { useMachine } from "@zag-js/react";
+import { machine } from "./machines/pin-input";
+
+const inputs = [...Array.from({ length: 4 }).keys()];
+
+function App() {
+  const [state, send] = useMachine(machine);
+
+  const { value, focusedIndex } = state.context;
+  return (
+    <>
+      <div
+        data-part="container"
+        className="max-w-md mx-auto flex flex-col gap-4"
+      >
+        <label>Enter verification</label>
+        <div data-part="input-group" className="flex gap-2 justify-center">
+          {inputs.map((index) => (
+            <input
+              key={index}
+              value={value[index]}
+              onChange={(event) => {
+                const { value } = event.target;
+                send({ type: "INPUT", index, value });
+              }}
+              onFocus={() => {
+                send({ type: "FOCUS", index });
+              }}
+              onBlur={()=>{
+                send({type: "BLUR"})
+              }}
+              data-part="input"
+              className="block w-full text-center aspect-square rounded-xl bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            />
+          ))}
+        </div>
+        <pre>{JSON.stringify({ value, focusedIndex })}</pre>
+      </div>
+    </>
+  );
+}
+
+export default App;
