@@ -6,7 +6,8 @@ const inputs = [...Array.from({ length: 4 }).keys()];
 function App() {
   const [state, send] = useMachine(machine);
 
-  const { value, focusedIndex } = state.context;
+  const { value } = state.context;
+
   return (
     <>
       <div
@@ -26,18 +27,23 @@ function App() {
               onFocus={() => {
                 send({ type: "FOCUS", index });
               }}
-              onBlur={()=>{
-                send({type: "BLUR"})
+              onBlur={() => {
+                send({ type: "BLUR" });
               }}
               data-part="input"
               className="block w-full text-center aspect-square rounded-xl bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             />
           ))}
         </div>
-        <pre>{JSON.stringify({ value, focusedIndex })}</pre>
+        <pre>{stringify(state)}</pre>
       </div>
     </>
   );
+}
+
+function stringify(state: Record<string, any>) {
+  const { value, event, context } = state;
+  return JSON.stringify({ state: value, event, context }, null, 2);
 }
 
 export default App;

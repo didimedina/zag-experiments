@@ -11,38 +11,38 @@ type MachineContext = {
   focusedIndex: number;
 };
 
-export const machine = createMachine<MachineState, MachineContext>({
+export const machine = createMachine<MachineContext, MachineState>({
   id: "pin-input",
   context: {
     value: [],
     focusedIndex: -1,
   },
+  initial: "idle",
   states: {
     idle: {
       on: {
-        "FOCUS": {
+        "INPUT.FOCUS": {
           target: "focused",
-          actions: ["saveFocusedIndex"],
+          actions: ["setFocusedIndex"],
         },
       },
     },
     focused: {
       on: {
-        BLUR: {
+        "INPUT.BLUR": {
           target: "idle",
-          actions: ["clearFocusIndex"],
+          actions: ["clearFocusedIndex"],
         },
-        INPUT: {
+        "INPUT.CHANGE": {
           actions: ["setFocusedValue", "focusNextInput"],
         },
-        BACKSPACE: {
-          actions: ["clearFocusedInput", "focusPreviousInput"],
+        "INPUT.BACKSPACE": {
+          actions: ["clearFocusedValue", "focusPreviousInput"],
         },
-        PASTE: {
+        "INPUT.PASTE": {
           actions: ["setPastedValue", "focusLastEmptyInput"],
         },
       },
     },
   },
-  initial: "",
 });
