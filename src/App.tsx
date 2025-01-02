@@ -22,13 +22,23 @@ function App() {
               value={value[index]}
               onChange={(event) => {
                 const { value } = event.target;
-                send({ type: "INPUT", index, value });
+                send({ type: "INPUT.CHANGE", index, value });
               }}
               onFocus={() => {
-                send({ type: "FOCUS", index });
+                send({ type: "INPUT.FOCUS", index });
               }}
               onBlur={() => {
-                send({ type: "BLUR" });
+                send({ type: "INPUT.BLUR" });
+              }}
+              onKeyDown={(event) => {
+                const { key } = event;
+                if (key === "Backspace") {
+                  send({ type: "INPUT.BACKSPACE", index });
+                }
+              }}
+              onPaste={(event) => {
+                const value = event.clipboardData.getData("Text");
+                send({ type: "INPUT.PASTE", value, index });
               }}
               data-part="input"
               className="block w-full text-center aspect-square rounded-xl bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
