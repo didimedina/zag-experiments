@@ -18,6 +18,8 @@ function App() {
         <div data-part="input-group" className="flex gap-2 justify-center">
           {inputs.map((index) => (
             <input
+              data-part="input"
+              maxLength={2}
               key={index}
               value={value[index]}
               onChange={(event) => {

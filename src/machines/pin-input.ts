@@ -59,9 +59,14 @@ export const machine = createMachine<MachineContext, MachineState>(
         context.focusedIndex = -1;
       },
       setFocusedValue(context, event) {
+        const eventValue: string = event.value;
+        const focusedValue = context.value[context.focusedIndex];
+        const updatedValue = resolveValueUpdate(focusedValue, eventValue);
+        // probably a better name for this function os const updatedValue = resolveValueUpdate
+
         // setting the focused value means updating the value array. with the value in the correlating input
         // to do that we need to take the value and put it in the right place, so we need the index.
-        context.value[context.focusedIndex] = event.value;
+        context.value[context.focusedIndex] = updatedValue;
       },
       clearFocusedValue(context) {
         context.value[context.focusedIndex] = "";
@@ -107,11 +112,21 @@ export const machine = createMachine<MachineContext, MachineState>(
   }
 );
 
-/*
+// UTILITY FUNCTIONS
 
-TODOs
+// "2" , "22" => "2"
+function resolveValueUpdate(focusedValue: string, eventValue: string) {
+  let updatedValue = eventValue;
+  if (focusedValue.charAt(0) === eventValue.charAt(0)) {
+    // this rule deals with both these cases:
+    // "2" , "29" => "9"
+    // "2" , "22" => "2" -> we don't need to define this case because changes only need to occure if the eventValue has a unique second char, otherwise we can make the decision that charAt(1) is the right value even thos we don't know what it is. it can be 2 it can be 9, but we don't need to know.
 
-- [x] hitting backspace on first input changes the value to an empty string, and then moves to the next input. we don't want this behaviour. we want it to not move focus if the value is ""
-- [ ] if you go back to an input and add a char it allows two values to exist in the field before moving on, we want it to replace then move on.
+    updatedValue = eventValue.charAt(1);
+    // this might seem confusing but we assume the theres currently 2 chars in the inputs value, so zero should match
+  } else if (focusedValue.charAt(0) === eventValue.charAt(1)) {
+    updatedValue = eventValue.charAt(0);
+  }
 
-*/
+  return updatedValue;
+}
